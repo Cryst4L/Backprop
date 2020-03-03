@@ -8,10 +8,7 @@ int main(void)
 	int temp = dot(A,B);
 	std::cout << temp << '\n';
 
-
 	Tensor2D C(10,4);
-	C.set(5);
-//	float temp2 = C(8,3);
-//	std::cout << temp2 << '\n';
+	C = outer(A, B);
 	return 0;
 }
