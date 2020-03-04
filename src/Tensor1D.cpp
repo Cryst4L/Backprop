@@ -15,6 +15,32 @@ Tensor1D::Tensor1D(const Tensor1D& t)
 		_data[i] = t._data[i];
 }
 
+Tensor1D Tensor1D::operator+(const Tensor1D& t) {
+	Tensor1D r(_size);
+	if (_size == t._size) {
+		for (int i = 0; i < _size; i++)
+			r._data[i] = _data[i] + t._data[i];
+	} else {
+		std::cerr << " Tensor size mismatch !" << std::endl;
+	}	
+	return r;
+}
+
+Tensor1D Tensor1D::operator-(const Tensor1D& t) {
+	Tensor1D r(_size);
+	if (_size == t._size) {
+		for (int i = 0; i < _size; i++)
+			r._data[i] = _data[i] - t._data[i];
+	} else {
+		std::cerr << " Tensor size mismatch !" << std::endl;
+	}
+	return r;
+}
+
+float& Tensor1D::operator()(int n) {
+	return _data[n];
+}
+
 Tensor1D& Tensor1D::operator=(const Tensor1D& t) {
 
 	if (this == &t) return *this;
@@ -34,13 +60,14 @@ int Tensor1D::size() {
 	return _size;
 }
 
-void Tensor1D::set(float value) {
+void Tensor1D::setValue(float v) {
 	for (int i = 0; i < _size; i++)
-		_data[i] = value;
+		_data[i] = v;
 }
 
-float& Tensor1D::operator()(int n) {
-	return _data[n];
+Tensor1D::~Tensor1D() {
+	if (_data)
+		delete [] _data;
 }
 
 float dot(Tensor1D& lhs, Tensor1D& rhs) {
@@ -52,11 +79,6 @@ float dot(Tensor1D& lhs, Tensor1D& rhs) {
 		std::cerr << " Tensor size mismatch !" << std::endl;
 	}
 	return acc;
-}
-
-Tensor1D::~Tensor1D() {
-	if (_data)
-		delete _data;
 }
 
 		

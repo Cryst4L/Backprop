@@ -23,7 +23,52 @@ Tensor2D::Tensor2D(const Tensor2D& t)
 			_data[i][j] = t._data[i][j];
 }
 
+Tensor2D::~Tensor2D() {
+	for (int i = 0; i < _rows; i++)
+		delete [] _data[i];
+	delete [] _data;
+}
 
+Tensor2D Tensor2D::operator+(const Tensor2D& t) {
+	Tensor2D r(_rows,_cols);
+	if (_rows == t._rows && _cols == t._cols) {
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < _cols; j++)
+				r._data[i][j] = _data[i][j] + t._data[i][j];
+	} else {
+		std::cerr << " Tensor size mismatch !" << std::endl;
+	}
+	return r;
+}
+
+Tensor2D Tensor2D::operator-(const Tensor2D& t) {
+	Tensor2D r(_rows,_cols);
+	if (_rows == t._rows && _cols == t._cols) {
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < _cols; j++)
+				r._data[i][j] = _data[i][j] - t._data[i][j];
+	} else {
+		std::cerr << " Tensor size mismatch !" << std::endl;
+	}
+	return r;
+}
+
+Tensor2D Tensor2D::operator*(const Tensor2D& t) {
+	Tensor2D r(_rows,t._cols);
+	if (_cols == t._rows) {
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < t._cols; j++) {
+				float acc = 0;
+				for (int k = 0; k < _cols; k++)
+					acc += _data[i][k] * t._data[k][j];
+				r._data[i][j] = acc;
+			}
+	} else {
+		std::cerr << " Tensor size mismatch !";
+	}
+	return r;
+}
+	
 Tensor2D& Tensor2D::operator=(const Tensor2D& t) {
 
 	if (this == &t) return *this;
@@ -53,21 +98,14 @@ int Tensor2D::cols() {
 	return _cols;
 }
 
-void Tensor2D::set(float value) {
+void Tensor2D::setValue(float value) {
 	for (int i = 0; i < _rows; i++)
 		for (int j = 0; j < _cols; j++)
 			_data[i][j] = value;
 }
 
-float& Tensor2D::operator()(int i, int j)
-{
+float& Tensor2D::operator()(int i, int j) {
 	return _data[i][j];
-}
-
-Tensor2D::~Tensor2D() {
-	for (int i = 0; i < _rows; i++)
-		delete [] _data[i];
-	delete [] _data;
 }
 
 Tensor2D outer(Tensor1D& lhs, Tensor1D& rhs)

@@ -12,7 +12,7 @@ if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 # Set the compiler flags ---------------------------------------------
 if (CMAKE_COMPILER_IS_GNUCXX)
-	set(CMAKE_CXX_FLAGS "-O2 -Wall")
+	set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra")
 endif()
 # Include the headers ------------------------------------------------
 include_directories(.)
