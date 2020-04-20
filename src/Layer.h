@@ -1,14 +1,20 @@
 #pragma once
-#include "Tensor1D.h"
+#include <Eigen/Core>
+
+namespace Backprop
+{
+using namespace Eigen;
 
 class Layer
 {
   public:	
-	virtual Tensor1D propagate(Tensor1D& input)=0;
-	virtual Tensor1D backpropagate(Tensor1D& input, Tensor1D& epsilon)=0;
+	virtual VectorXd propagate(VectorXd& input)=0;
+	virtual VectorXd backpropagate(VectorXd& input, VectorXd& epsilon)=0;
 
 	virtual bool hasParameters()=0;
-	virtual Tensor1D getUnshapedParameters()=0;
 
+	virtual VectorXd getUnshapedParameters();
+	virtual VectorXd getUnshapedGradient();
 };
 
+}

@@ -1,10 +1,13 @@
 #include "Layer.h"
 
-bool Layer::hasParameters() {
-	return true;
+using namespace Backprop;
+
+VectorXd Layer::getUnshapedParameters() {
+	return VectorXd(0);
 }
 
-Tenso1D Layer::getUnshapedParameters() {
-	return Tensor1D(0);
+VectorXd Layer::getUnshapedGradient() {
+	return VectorXd(0);
 }
+
 
