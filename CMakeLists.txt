@@ -20,6 +20,13 @@ if(NOT EIGEN3_FOUND)
 	                    " Please ensure it is installed on your machine.")
 endif()
 
+# Find GNUPlot -----------------------------------------------------------------
+find_program(GNUPLOT_EXECUTABLE gnuplot)
+if (NOT GNUPLOT_EXECUTABLE)
+		message(FATAL_ERROR " GNUPlot is required to diplay data. \n"
+		                    " Please ensure it is installed on your machine.")	
+endif()
+
 # Include Backprop and Eigen3 --------------------------------------------------
 include_directories(. ${EIGEN3_INCLUDE_DIRS})
 
@@ -33,6 +40,10 @@ endif()
 
 # Make the library -------------------------------------------------------------
 add_library(Backprop SHARED ${BACKPROP_SRC})
+
+# Get MNIST dataset ------------------------------------------------------------
+execute_process(COMMAND ${CMAKE_SOURCE_DIR}/data/get_mnist.py
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/data)	
 
 # Build the example ------------------------------------------------------------
 option(BUILD_EXAMPLE "Build the example." ON)

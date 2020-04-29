@@ -15,6 +15,8 @@ class Layer
 
 	virtual VectorXd getUnshapedParameters();
 	virtual VectorXd getUnshapedGradient();
-};
 
+	virtual void setUnshapedParameters(VectorXd& unshaped);
+	virtual void setUnshapedGradient(VectorXd& unshaped);
+};
 }

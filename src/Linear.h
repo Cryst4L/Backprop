@@ -10,8 +10,6 @@ class Linear : public Layer
 	int _input_size;
 	int _output_size;
 
-	double _bias;
-
 	MatrixXd _parameters;
 	MatrixXd _gradient;
 
@@ -22,12 +20,14 @@ class Linear : public Layer
 	Linear(int input_size, int output_size); 
 
 	VectorXd propagate(VectorXd& input);
-	VectorXd backpropagate(VectorXd& input, VectorXd& epsilon);
+	VectorXd backpropagate(VectorXd& input, VectorXd& sensitivity);
 
 	bool hasParameters();
 
 	VectorXd getUnshapedParameters();
 	VectorXd getUnshapedGradient();
 
+	void setUnshapedParameters(VectorXd& unshaped);
+	void setUnshapedGradient(VectorXd& unshaped);
 };
 }

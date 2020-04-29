@@ -1,5 +1,4 @@
 #include "Activation.h"
-#include <Eigen/Core>
 
 using namespace Backprop;
 
@@ -37,8 +36,6 @@ VectorXd Activation::backpropagate(VectorXd& input, VectorXd& epsilon)
 	switch (_activation)
 	{
 		case SIGM:
-//			VectorXd output = propagate(input);
-//			input_grad.array() = output.array() * (1.0 - output.array());
 			input_grad.array() = propagate(input).array() * (1.0 - propagate(input).array());
 			break;
 

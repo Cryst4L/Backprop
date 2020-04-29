@@ -5,14 +5,8 @@ namespace Backprop
 {
 class Activation : public Layer 
 {
-  private:
-	int _size;
-
   public:
-
 	enum ActFunc {SIGM, RELU};
-
-	ActFunc _activation;
 
 	Activation(int size, ActFunc activation);
 
@@ -20,6 +14,11 @@ class Activation : public Layer
 
 	VectorXd propagate(VectorXd& input);
 	VectorXd backpropagate(VectorXd& input, VectorXd& epsilon);
+
+  private:
+	int _size;
+	ActFunc _activation;
+
 };
 }
 
