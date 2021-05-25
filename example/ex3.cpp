@@ -13,7 +13,7 @@
 
 using namespace Backprop;
 
-// 98.5
+// 98.8
 
 int main(void)
 {
@@ -53,11 +53,6 @@ int main(void)
 	net.addLinearLayer(490, 50);
 	net.addActivationLayer(RELU);
 
-	///////////////////////////////////////////
-/*
-	net.addLinearLayer(50, 50, H);
-	net.addActivationLayer(50, RELU);
-*/
 	net.addLinearLayer(50, 10);
 	net.addActivationLayer(RELU);
 
@@ -93,7 +88,7 @@ int main(void)
 	}
 
 	float elapsed = timer.getTimeSec();
-	std::cout << " elpased time : " << elapsed << "sec" << std::endl; 
+	std::cout << " elapsed time : " << elapsed << "sec" << std::endl; 
 
 	// Display the features ////////////////////////////////////////////////////
 

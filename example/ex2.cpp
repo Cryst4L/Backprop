@@ -11,13 +11,14 @@
 #include "Backprop/Convolutional.h"
 #include "Backprop/Optimize.h"
 
+
 using namespace Backprop;
 
-// 98.2
+// 98.7
 
 int main(void)
 {
-	srand(9);
+	srand(11);
 
 	/// Load data //////////////////////////////////////////////////////////////
 
@@ -42,27 +43,22 @@ int main(void)
 
 	// Multiple Conv ///////////////////////////
 
-	net.addConvolutionalLayer(28, 28, 9, 1, 12);
+	net.addConvolutionalLayer(28, 28, 7, 1, 5, 0);
 	net.addActivationLayer(RELU);
 
-	net.addConvolutionalLayer(20, 20, 5, 12, 8);
+	net.addLinearLayer(2420, 50);
 	net.addActivationLayer(RELU);
 
-	net.addLinearLayer(2048, 50);
+	net.addLinearLayer(50, 50);
 	net.addActivationLayer(RELU);
 
-	///////////////////////////////////////////
-/*
-	net.addLinearLayer(50, 50, H);
-	net.addActivationLayer(50, RELU);
-*/
 	net.addLinearLayer(50, 10);
 	net.addActivationLayer(RELU);
 
 	// Train the Net ///////////////////////////////////////////////////////////
 
 	Dataset batch;
-	const int N_BATCH = 1000;
+	const int N_BATCH = 10000;
 	const int BATCH_SIZE = 100;
 
 	Timer timer;
@@ -91,37 +87,30 @@ int main(void)
 	}
 
 	float elapsed = timer.getTimeSec();
-	std::cout << " elpased time : " << elapsed << "sec" << std::endl; 
+	std::cout << " elapsed time : " << elapsed << "sec" << std::endl; 
 
 	// Display the features ////////////////////////////////////////////////////
 
-	Convolutional* conv_layer_p = (Convolutional*) &(net.layer(0));
-	std::vector <MatrixXd> kernels = conv_layer_p->getKernels();
-	int kernel_size = kernels[0].rows();
+	int kernel_size = 7;
+	
+	Convolutional* layer_p = (Convolutional*) &(net.layer(0));
+	std::vector <MatrixXd> kernels = layer_p->getKernels();
 
 	MatrixXd kernel_map = buildMapfromData(kernels, kernel_size, kernel_size);
 	Display kernel_display(&kernel_map, "Kernels");
 
 	/////////////////////////////////
 
-	Convolutional* conv_layer_2_p = (Convolutional*) &(net.layer(2));
-	kernels = conv_layer_2_p->getKernels();
-	kernel_size = kernels[0].rows();
+	int feature_size = 22;
+	int nb_features_per_row = 5;
 
-	MatrixXd kernel_map_2 = buildMapfromData(kernels, kernel_size, kernel_size);
-	Display kernel_display_2(&kernel_map_2, "Kernels");
-
-	/////////////////////////////////
-
-	Linear* lin_layer_p = (Linear*) &(net.layer(4));
+	Linear* lin_layer_p = (Linear*) &(net.layer(2));
 	std::vector <VectorXd> unshaped_features = lin_layer_p->getFeatures();
-
-	int feature_size = 28 - (9 - 1)  - (5 - 1);
 	
 	std::vector <MatrixXd> features;
 	for (int i = 0; i < (int) unshaped_features.size(); i++)
 	{
-		for (int j = 0; j < 8; j++) 
+		for (int j = 0; j < nb_features_per_row; j++) 
 		{
 			int size = feature_size * feature_size;
 			VectorXd unshaped = unshaped_features[i].segment(j * size, size);
@@ -131,7 +120,7 @@ int main(void)
 	}
 
 	MatrixXd feature_map = buildMapfromData(features, feature_size, feature_size);
-	Backprop::Display feature_display(&feature_map, "Features");
+	Display feature_display(&feature_map, "Features");
 
 	// Test the net accuracy ///////////////////////////////////////////////////
 
@@ -159,20 +148,3 @@ int main(void)
 	return 0;
 }
 
-/*
-	VectorXd v(4); 
-	v << 1, 2, 3, 4;
-
-	MatrixXd m(2, 2);
-    m << 5, 6, 7, 8;
-
-	v = Map <VectorXd> (m.data(), m.size());
-
-	v(0) = 0;
-
-	std::cout << m << std::endl;
-
-	m(0,0) = 2;
-
-	std::cout << v << std::endl;
-*/
