@@ -1,4 +1,4 @@
-#Backprop
+# Backprop
 
 ## What is this ?
 
@@ -10,6 +10,6 @@ Currently it supports the following layers: Fully-Connected, Activation, Convolu
 
 Important note: Backprop does not use bias. This is a personal choice I made based on my own experience with Deep Learning.
 
-##Coypright
+## Coypright
 
 This code is released under MiT license.
