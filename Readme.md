@@ -1,6 +1,6 @@
 # Backprop
 
-## What is this ?
+## What is this?
 
 Backprop is a vanilla Deep Learning implementation written in C++ 98 and based on Eigen3.
 
