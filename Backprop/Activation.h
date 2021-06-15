@@ -3,18 +3,17 @@
 
 namespace Backprop 
 {
-
-enum Function {SIGM, RELU, LIN};
+enum ActivationEnum {SIGM, RELU, SRELU, LIN};
 
 class Activation : public Layer 
 {
   private:
 
-	Function m_function;
+	ActivationEnum m_function;
 
   public:
- 
-	Activation(Function function)
+
+	Activation(ActivationEnum function)
 	: m_function(function)
 	{}
 
@@ -44,6 +43,10 @@ class Activation : public Layer
 				output.array() = input.array().max(0);
 				break;
 
+			case SRELU :
+				output.array() = (1 + input.array().exp()).log();	
+				break;			
+
 			case LIN  :
 				output.array() = input.array();
 				break;
@@ -51,6 +54,7 @@ class Activation : public Layer
 
 		return output;
 	}
+
 
 	// Activation gradient //////////////////////////////////////////////////////////
 	VectorXd actGrad(VectorXd& input)
@@ -65,7 +69,11 @@ class Activation : public Layer
 			case RELU :
 				output.array() = (input.array() > 0).cast<double>();
 				break;
-
+			
+			case SRELU:
+				output.array() = 1.0 / (1.0 + (-input).array().exp());
+				break;		
+			
 			case LIN  :
 				output.setOnes();
 				break;

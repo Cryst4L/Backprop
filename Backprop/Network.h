@@ -4,6 +4,8 @@
 #include "Convolutional.h"
 #include "Activation.h"
 #include "Sampling.h"
+#include "SoftMax.h"
+#include "ELU.h"
 #include "Types.h"
 
 using namespace Eigen;
@@ -67,7 +69,7 @@ class Network
 		m_input_stack.push_back(VectorXd(0));
 	}
 
-	void addActivationLayer(Function function)
+	void addActivationLayer(ActivationEnum function)
 	{
 		Activation * layer = new Activation(function);
 		m_layer_stack.push_back(layer);
@@ -88,6 +90,21 @@ class Network
 		Convolutional * layer = new Convolutional(input_map_rows, input_map_cols, 
 		                                          kernel_size, nb_input_maps, 
 		                                          nb_output_maps, propagate_ein);
+		m_layer_stack.push_back(layer);
+		m_input_stack.push_back(VectorXd(0));
+	}
+
+
+	void addSoftMaxLayer()
+	{
+		SoftMax * layer = new SoftMax();
+		m_layer_stack.push_back(layer);
+		m_input_stack.push_back(VectorXd(0));
+	}
+
+	void addELULayer(int size)
+	{
+		ELU * layer = new ELU(size);
 		m_layer_stack.push_back(layer);
 		m_input_stack.push_back(VectorXd(0));
 	}

@@ -1,42 +1,48 @@
 #pragma once
 #include "Types.h"
 #include "Network.h"
+#include "Cost.h"
 
 using namespace Eigen;
 
 namespace Backprop
 {
 
-void SGD(Network& network, Dataset& dataset, double learning_rate = 1E-3, double penality = 0.)
+void SGD(Network& network, Dataset& dataset, CostEnum cost_function = SSE, double learning_rate = 1E-2)
 {
-	double cost = 0;
+	Cost cost(cost_function);
+
+	double average_cost = 0;
+
+	int n = dataset.inputs.size();
 
 	// Loop over the dataset
-	for (int i = 0; i < (int) dataset.inputs.size(); i++) {
+	for (int i = 0; i < n; i++) {
 	
 		// Setup the samples
 		VectorXd input  = dataset.inputs[i];
 		VectorXd target = dataset.targets[i];
 	
-		// Compute the gradients
+		// Compute the prediction
 		VectorXd prediction = network.forwardPropagate(input);
-		VectorXd error = (prediction - target);
-		network.backPropagate(error);               // Fix this !
+		average_cost += cost.computeCost(prediction, target) / n;
 
+		// Compute the gradient
+		VectorXd eout = cost.computeGradient(prediction, target);
+		network.backPropagate(eout);             
 
-		// Accumulate the cost
-		cost += error.cwiseProduct(error).sum() / (float) dataset.inputs.size(); 
-
-		// Perform gradient descent
-		for(int j = 0; j < network.nbLayers(); j++) {
+		// Perform the gradient descent
+		for(int j = 0; j < network.nbLayers(); j++)
+		{
 			VectorXd parameters = network.layer(j).getParameters();
-			parameters -= learning_rate * network.layer(j).getGradient();
-			//parameters -= learning_rate * penality * parameters;
+			VectorXd gradient   = network.layer(j).getGradient();
+
+			parameters -= learning_rate * gradient;
 			network.layer(j).setParameters(parameters);
 		}
 	}
 
-	std::cout << "Average Cost = " << cost << std::endl;
+	std::cout << "Average Cost = " << average_cost << std::endl;
 
 	//display();
 	}

@@ -1,3 +1,5 @@
+// MLP with ELU + Softmax with CE
+
 #include <iostream>
 #include <vector>
 #include <cstdlib>
@@ -14,7 +16,7 @@
 
 using namespace Backprop;
 
-// 97.2
+// 97.65 s0 
 
 int main(void)
 {
@@ -41,21 +43,23 @@ int main(void)
 	Network net;
 
 	net.addLinearLayer(784, 50);
-	net.addActivationLayer(RELU);
+	net.addELULayer(50);
 
 	net.addLinearLayer(50, 50);
-	net.addActivationLayer(RELU);
+	net.addELULayer(50);
 
 	net.addLinearLayer(50, 50);
-	net.addActivationLayer(RELU);
+	net.addELULayer(50);
 
 	net.addLinearLayer(50, 10);
-	net.addActivationLayer(RELU);
+	net.addELULayer(10);
+
+	net.addSoftMaxLayer();
 
 	// Train the Net ///////////////////////////////////////////////////////////
 
 	Dataset batch;
-	const int N_BATCH = 5000;
+	const int N_BATCH = 10000;
 	const int BATCH_SIZE = 100;
 
 	Timer timer;
@@ -80,12 +84,19 @@ int main(void)
 
 		// Train the net on the batch //////////////////////////////////////////
 
-		SGD(net, batch, 0.01);
+		SGD(net, batch, CE, 0.01);
 	}
 
 	float elapsed = timer.getTimeSec();
-	std::cout << " elapsed time : " << elapsed << "sec" << std::endl; 
+	std::cout << " elapsed time : " << elapsed << "sec" << std::endl;
 
+	// Print the ELU coefficients //////////////////////////////////////////////
+
+	std::cout << " ELU coefficients : \n"; 
+
+	for (int i = 1; i < 9; i += 2)
+		std::cout << net.layer(i).getParameters() << std::endl;
+ 
 	// Display the features ////////////////////////////////////////////////////
 
 	int feature_size = 28;

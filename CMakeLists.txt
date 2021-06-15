@@ -42,9 +42,9 @@ else()
 # Build the example ------------------------------------------------------------
 option(BUILD_EXAMPLE "Build the example." ON)
 if(BUILD_EXAMPLE)
-	add_executable(EX1 example/ex1.cpp)
-	add_executable(EX2 example/ex2.cpp)
-	add_executable(EX3 example/ex3.cpp)
+	add_executable(EX1 examples/ex1.cpp)
+	add_executable(EX2 examples/ex2.cpp)
+	add_executable(EX3 examples/ex3.cpp)
 	#target_link_libraries(EXAMPLE Backprop)
 	execute_process(COMMAND ${CMAKE_SOURCE_DIR}/data/MNIST/get_mnist.py
 	                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/data/MNIST)
