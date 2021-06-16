@@ -5,6 +5,7 @@
 #include "Activation.h"
 #include "Sampling.h"
 #include "SoftMax.h"
+#include "Dropout.h"
 #include "ELU.h"
 #include "Types.h"
 
@@ -94,7 +95,6 @@ class Network
 		m_input_stack.push_back(VectorXd(0));
 	}
 
-
 	void addSoftMaxLayer()
 	{
 		SoftMax * layer = new SoftMax();
@@ -107,6 +107,31 @@ class Network
 		ELU * layer = new ELU(size);
 		m_layer_stack.push_back(layer);
 		m_input_stack.push_back(VectorXd(0));
+	}
+
+	void addDropoutLayer(double ratio = 0.5, bool use_dropout = true)
+	{
+		Dropout * layer = new Dropout(ratio, use_dropout);
+		m_layer_stack.push_back(layer);
+		m_input_stack.push_back(VectorXd(0));
+	}
+
+	void enableDropout()
+	{
+		for(int i = 0; i < (int) m_layer_stack.size(); i++) {
+			Dropout * layer = dynamic_cast <Dropout*> (m_layer_stack[i]);
+			if (layer != NULL)
+				layer->enableDropout();
+		}
+	}
+
+	void disableDropout()
+	{
+		for(int i = 0; i < (int) m_layer_stack.size(); i++) {
+			Dropout * layer = dynamic_cast <Dropout*> (m_layer_stack[i]);
+			if (layer != NULL)
+				layer->disableDropout();
+		}
 	}
 
 	VectorXd forwardPropagate(VectorXd& input)
