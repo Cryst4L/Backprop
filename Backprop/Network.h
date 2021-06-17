@@ -86,11 +86,13 @@ class Network
 
 	void addConvolutionalLayer(int input_map_rows, int input_map_cols, 
 	                           int kernel_size, int nb_input_maps, 
-	                           int nb_output_maps, bool propagate_ein = 1)
+	                           int nb_output_maps, bool padded = 0, 
+	                           bool propagate_ein = 1)
 	{
 		Convolutional * layer = new Convolutional(input_map_rows, input_map_cols, 
 		                                          kernel_size, nb_input_maps, 
-		                                          nb_output_maps, propagate_ein);
+		                                          nb_output_maps, padded, 
+	                                              propagate_ein);
 		m_layer_stack.push_back(layer);
 		m_input_stack.push_back(VectorXd(0));
 	}
