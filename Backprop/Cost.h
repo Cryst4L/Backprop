@@ -3,7 +3,7 @@
 
 namespace Backprop 
 {
-enum CostEnum {AE, SSE, CE};
+enum CostEnum {ABS, SSE, CE};
 
 static const double EPSILON = 0.001;
 
@@ -30,7 +30,7 @@ class Cost
 	
 		switch(m_function) 
 		{
-			case AE :
+			case ABS :
 				cost = (output - target).array().abs().sum();
 				break;
 
@@ -57,7 +57,7 @@ class Cost
 
 		switch(m_function) 
 		{
-			case AE :
+			case ABS :
 				gradient = (output - target).array().sign();
 				break;
 
