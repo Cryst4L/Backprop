@@ -4,7 +4,9 @@
 
 Backprop is a vanilla Deep Learning implementation written in C++ 98 and based on Eigen3.
 
-This code serves as a boilerplate for my personal research. It's not documented, but it is written in a comprehensive fashion.
+This code serves as a boilerplate for my personal research. 
+
+It's not documented, but it is written in a comprehensive fashion.
 
 Currently it supports the following layers: Fully-Connected, Activation, Convolutional, SoftMax, Dropout and Sampling.
 
