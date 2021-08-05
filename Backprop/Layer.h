@@ -1,6 +1,8 @@
 #pragma once
 #include <Eigen/Core>
 
+using namespace Eigen;
+
 namespace Backprop 
 {
 enum IO {I, H, O};

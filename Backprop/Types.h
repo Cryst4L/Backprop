@@ -5,6 +5,7 @@ using namespace Eigen;
 
 namespace Backprop
 {
+typedef unsigned char BYTE;
 
 enum DatasetType {TRAIN, TEST, VALIDATION};
 

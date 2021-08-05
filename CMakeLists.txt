@@ -21,8 +21,11 @@ if(NOT EIGEN3_FOUND)
 	                    " Please ensure it is installed on your machine.")
 endif()
 
+# find OpenMP ------------------------------------------------------------------
+#find_package(OpenMP REQUIRED)
+
 # Include Backprop and Eigen3 --------------------------------------------------
-include_directories(. ${EIGEN3_INCLUDE_DIRS})
+include_directories(. ${EIGEN3_INCLUDE_DIRS} )
 
 # Set the compiler flags -------------------------------------------------------
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -37,25 +40,30 @@ endif()
 find_program(GNUPLOT_EXECUTABLE gnuplot)
 if (NOT GNUPLOT_EXECUTABLE)
 	message(WARNING "GNUPlot is required to run the example.")
-else()
+endif()
 
 # Build the example ------------------------------------------------------------
 option(BUILD_EXAMPLE "Build the example." ON)
+
 if(BUILD_EXAMPLE)
 	add_executable(EX1 examples/ex1.cpp)
 	add_executable(EX2 examples/ex2.cpp)
 	add_executable(EX3 examples/ex3.cpp)
 	add_executable(EX4 examples/ex4.cpp)
-	#target_link_libraries(EXAMPLE Backprop)
+	add_executable(EX5 examples/ex5.cpp)
+
+#	target_link_libraries(EX1 OpenMP::OpenMP_CXX)
+#	target_link_libraries(EX2 OpenMP::OpenMP_CXX)
+#	target_link_libraries(EX3 OpenMP::OpenMP_CXX)
+#	target_link_libraries(EX4 OpenMP::OpenMP_CXX)
+#	target_link_libraries(EX5 OpenMP::OpenMP_CXX)
+endif()
+
 	execute_process(COMMAND ${CMAKE_SOURCE_DIR}/data/MNIST/get_mnist.py
 	                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/data/MNIST)
-	endif()
-endif()
 
 # Copy the dataset -----------------------------------------------------------
 file(COPY "data" DESTINATION ".")
-
-
 
 
 # TODO: subfolder for the example, the python script with image? NO

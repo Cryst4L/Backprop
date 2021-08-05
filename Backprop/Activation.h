@@ -1,9 +1,10 @@
 #pragma once
 #include <Eigen/Core>
+#include <Backprop/Layer.h>
 
 namespace Backprop 
 {
-enum ActivationEnum {SIGM, RELU, SRELU, LIN};
+enum ActivationEnum {SIGM, TANH, RELU, SRELU, LIN};
 
 class Activation : public Layer 
 {
@@ -17,19 +18,16 @@ class Activation : public Layer
 	: m_function(function)
 	{}
 
-	// Activation m_function //////////////////////////////////////////////////////////
 	VectorXd forwardProp(VectorXd& input)
 	{
 		return actFun(input);
 	}
 
-	// Activation gradient //////////////////////////////////////////////////////////
 	VectorXd backProp(VectorXd& input, VectorXd& ein)
 	{
 		return ein.cwiseProduct(actGrad(input));
 	}
 
-	// Activation m_function //////////////////////////////////////////////////////////
 	VectorXd actFun(VectorXd& input)
 	{
 		VectorXd output(input.size());
@@ -37,6 +35,11 @@ class Activation : public Layer
 		switch(m_function) {
 			case SIGM :
 				output.array() = 1.0 / (1.0 + (-input).array().exp());
+				break;
+
+			case TANH :
+				output.array() = (input.array().exp() - (-input).array().exp())
+				               / (input.array().exp() + (-input).array().exp()); 
 				break;
 
 			case RELU :
@@ -64,6 +67,10 @@ class Activation : public Layer
 		switch(m_function) {
 			case SIGM :
 				output.array() = actFun(input).array() * (1. - actFun(input).array());
+				break;
+
+			case TANH :
+				output.array() = 1 - actFun(input).array() * actFun(input).array();
 				break;
 
 			case RELU :

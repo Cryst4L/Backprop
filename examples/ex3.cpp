@@ -1,21 +1,10 @@
 // ConvNet
 
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-
-#include "Backprop/MNIST.h"
-#include "Backprop/Display.h"
-#include "Backprop/Utils.h"
-#include "Backprop/Timer.h"
-#include "Backprop/Types.h"
-#include "Backprop/Network.h"
-#include "Backprop/Convolutional.h"
-#include "Backprop/Optimize.h"
+#include "Backprop/Core.h"
 
 using namespace Backprop;
 
-// 98.85 s11
+// 98.85 s0
 
 int main(void)
 {
@@ -24,6 +13,8 @@ int main(void)
 	/// Load data //////////////////////////////////////////////////////////////
 
 	MNIST train_set("data/MNIST", TRAIN);
+
+	/// Display some data //////////////////////////////////////////////////////
 
 	const int sample_size = 28;
 	std::vector <MatrixXd> samples;
@@ -44,7 +35,7 @@ int main(void)
 
 	// Multiple Conv ///////////////////////////
 
-	net.addConvolutionalLayer(28, 28, 7, 1, 10, 0);
+	net.addConvolutionalLayer(28, 28, 7, 1, 10, 0, 0);
 	net.addActivationLayer(RELU);
 
 	net.addSamplingLayer(22, 22, 10, 2);
@@ -61,8 +52,11 @@ int main(void)
 	// Train the Net ///////////////////////////////////////////////////////////
 
 	Dataset batch;
-	const int N_BATCH = 10000;
+	const int N_BATCH = 1000;
 	const int BATCH_SIZE = 100;
+
+	VectorXd train_costs = VectorXd::Zero(N_BATCH);
+	Plot plot(&train_costs, "train cost", "red");
 
 	Timer timer;
 
@@ -86,7 +80,12 @@ int main(void)
 
 		// Train the net on the batch //////////////////////////////////////////
 
-		SGD(net, batch, SSE, 0.01);
+		train_costs(n) = SGD(net, batch, SSE, 0.01);
+		std::cout << "Average cost = " << train_costs(n) << std::endl;
+
+		// Plot the training progress //////////////////////////////////////////////
+
+		plot.render();
 	}
 
 	float elapsed = timer.getTimeSec();
@@ -159,20 +158,3 @@ int main(void)
 	return 0;
 }
 
-/*
-	VectorXd v(4); 
-	v << 1, 2, 3, 4;
-
-	MatrixXd m(2, 2);
-    m << 5, 6, 7, 8;
-
-	v = Map <VectorXd> (m.data(), m.size());
-
-	v(0) = 0;
-
-	std::cout << m << std::endl;
-
-	m(0,0) = 2;
-
-	std::cout << v << std::endl;
-*/

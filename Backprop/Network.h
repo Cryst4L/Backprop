@@ -152,8 +152,78 @@ class Network
 	{
 		VectorXd signal = ein;
 		int l = m_layer_stack.size();
-		for(int i = l - 1; i >= 0; i--) {
+		for(int i = l - 1; i >= 0; i--)
 			signal = m_layer_stack[i]->backProp(m_input_stack[i], signal);
+
+/*
+		VectorXd signal = ein;
+		int l = m_layer_stack.size();
+
+		signal = m_layer_stack[l - 1]->backProp(m_input_stack[l - 1], signal);
+		signal = m_layer_stack[l - 2]->backProp(m_input_stack[l - 2], signal);
+		signal = m_layer_stack[l - 3]->backProp(m_input_stack[l - 3], signal);
+		signal = m_layer_stack[l - 4]->backProp(m_input_stack[l - 4], signal);
+		signal = m_layer_stack[l - 5]->backProp(m_input_stack[l - 5], signal);
+		// signal = m_layer_stack[l - 6]->backProp(m_input_stack[l - 6], signal);
+		//signal = m_layer_stack[l - 7]->backProp(m_input_stack[l - 7], signal);
+		//signal = m_layer_stack[l - 8]->backProp(m_input_stack[l - 8], signal);
+		//signal = m_layer_stack[l - 9]->backProp(m_input_stack[l - 9], signal);
+*/
+	}
+
+	VectorXd getParameters() 
+	{
+		int size = 0;
+		for(int i = 0; i < (int) m_layer_stack.size(); i++) 
+			size += m_layer_stack[i]->getParameters().size();
+
+		int offset = 0;
+		VectorXd parameters(size);
+		for(int i = 0; i < (int) m_layer_stack.size(); i++) {
+			VectorXd layer_parameters = m_layer_stack[i]->getParameters(); 
+			parameters.segment(offset, layer_parameters.size()) = layer_parameters;
+			offset += layer_parameters.size();			
+		}
+
+		return parameters;
+	}
+
+	VectorXd getGradient() 
+	{
+		int size = 0;
+		for(int i = 0; i < (int) m_layer_stack.size(); i++) 
+			size += m_layer_stack[i]->getGradient().size();
+
+		int offset = 0;
+		VectorXd gradient(size);
+		for(int i = 0; i < (int) m_layer_stack.size(); i++) {
+			VectorXd layer_gradient = m_layer_stack[i]->getGradient(); 
+			gradient.segment(offset, layer_gradient.size()) = layer_gradient;
+			offset += layer_gradient.size();			
+		}
+
+		return gradient;
+	}
+
+	void setParameters(VectorXd& parameters)
+	{
+		int offset = 0;
+		for (int i = 0; i < (int) m_layer_stack.size(); i++) {
+			int size = m_layer_stack[i]->getParameters().size();
+			VectorXd layer_parameters = parameters.segment(offset, size);
+			m_layer_stack[i]->setParameters(layer_parameters);
+			offset += size;
+		}
+	}
+
+	void setGradient(VectorXd& gradient)
+	{
+		int offset = 0;
+		for (int i = 0; i < (int) m_layer_stack.size(); i++) {
+			int size = m_layer_stack[i]->getParameters().size();
+			VectorXd layer_gradient = gradient.segment(offset, size);
+			m_layer_stack[i]->setGradient(layer_gradient);
+			offset += size;
 		}
 	}
 

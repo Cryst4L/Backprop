@@ -1,18 +1,6 @@
 // MLP with ReLU
 
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-
-#include "Backprop/MNIST.h"
-#include "Backprop/Display.h"
-#include "Backprop/Utils.h"
-#include "Backprop/Timer.h"
-#include "Backprop/Types.h"
-#include "Backprop/Network.h"
-#include "Backprop/Convolutional.h"
-#include "Backprop/Optimize.h"
-
+#include "Backprop/Core.h"
 
 using namespace Backprop;
 
@@ -25,6 +13,8 @@ int main(void)
 	/// Load data //////////////////////////////////////////////////////////////
 
 	MNIST train_set("data/MNIST", TRAIN);
+
+	/// Display some data //////////////////////////////////////////////////////
 
 	const int sample_size = 28;
 	std::vector <MatrixXd> samples;
@@ -57,10 +47,13 @@ int main(void)
 	// Train the Net ///////////////////////////////////////////////////////////
 
 	Dataset batch;
-	const int N_BATCH = 5000;
-	const int BATCH_SIZE = 100;
+	const int N_BATCH = 500;
+	const int BATCH_SIZE = 1000;
 
 	Timer timer;
+
+	VectorXd train_costs = VectorXd::Zero(N_BATCH);
+	Plot plot(&train_costs, "train cost", "red");
 
 	for (int n = 0; n < N_BATCH; n++)
 	{
@@ -82,7 +75,12 @@ int main(void)
 
 		// Train the net on the batch //////////////////////////////////////////
 
-		SGD(net, batch, SSE, 0.01);
+		train_costs(n) = SGD(net, batch, SSE, 0.01);
+		std::cout << "Average cost = " << train_costs(n) << std::endl;
+
+		// Plot the training progress //////////////////////////////////////////////
+
+		plot.render();
 	}
 
 	float elapsed = timer.getTimeSec();
@@ -130,4 +128,32 @@ int main(void)
 
 	return 0;
 }
+
+/*
+		// Test the net accuracy ///////////////////////////////////////////////
+
+		batch.inputs.clear();
+		batch.targets.clear();
+
+		for (int i = 0; i < BATCH_SIZE; i++)
+		{
+			int s = rand() % test_set.samples().rows();
+
+			VectorXd sample = test_set.samples().row(s);
+			batch.inputs.push_back(sample);
+
+			VectorXd target = test_set.targets().row(s);
+			batch.targets.push_back(target);
+		}
+
+		Cost cost(SSE);
+		for (int i = 0; i < BATCH_SIZE; i++)
+		{
+			VectorXd sample = test_set.samples().row(i);
+			VectorXd target = test_set.targets().row(i);
+
+			VectorXd prediction = net.forwardPropagate(sample);
+			test_costs(n) += cost.computeCost(prediction, target) / BATCH_SIZE;
+		}
+*/
 

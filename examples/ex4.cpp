@@ -1,29 +1,20 @@
 // ConvNet + Dropout
 
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-
-#include "Backprop/MNIST.h"
-#include "Backprop/Display.h"
-#include "Backprop/Utils.h"
-#include "Backprop/Timer.h"
-#include "Backprop/Types.h"
-#include "Backprop/Network.h"
-#include "Backprop/Convolutional.h"
-#include "Backprop/Optimize.h"
+#include "Backprop/Core.h"
 
 using namespace Backprop;
 
-// 98.71
+// 98.83 s0 | 98.86 s9 | 98.90 s10 | 99.05 s11
 
 int main(void)
 {
 	srand(0); 
 
-	/// Load data //////////////////////////////////////////////////////////////
+	/// Load the dataset ///////////////////////////////////////////////////////
 
 	MNIST train_set("data/MNIST", TRAIN);
+
+	/// Display some data //////////////////////////////////////////////////////
 
 	const int sample_size = 28;
 	std::vector <MatrixXd> samples;
@@ -42,8 +33,6 @@ int main(void)
 
 	Network net;
 
-	// Multiple Conv ///////////////////////////
-
 	net.addConvolutionalLayer(28, 28, 7, 1, 16, 0);
 	net.addActivationLayer(RELU);
 	net.addDropoutLayer(0.25);
@@ -52,20 +41,23 @@ int main(void)
 
 	net.addConvolutionalLayer(11, 11, 5, 16, 16);
 	net.addActivationLayer(RELU);
-	net.addDropoutLayer(0.5);
+	net.addDropoutLayer(0.25);
 
 	net.addLinearLayer(784, 50);
 	net.addActivationLayer(RELU);
 	net.addDropoutLayer(0.25);
 
 	net.addLinearLayer(50, 10);
-	net.addActivationLayer(RELU); // RELU
+	net.addActivationLayer(RELU);
 
 	// Train the Net ///////////////////////////////////////////////////////////
 
 	Dataset batch;
-	const int N_BATCH = 2500;
-	const int BATCH_SIZE = 100;
+	const int N_BATCH = 100;
+	const int BATCH_SIZE = 1000;
+
+	VectorXd train_costs = VectorXd::Zero(N_BATCH);
+	Plot plot(&train_costs, "train cost", "red");
 
 	Timer timer;
 
@@ -89,7 +81,12 @@ int main(void)
 
 		// Train the net on the batch //////////////////////////////////////////
 
-		SGD(net, batch, SSE, 0.01);
+		train_costs(n) = SGD(net, batch, SSE, 0.01);
+		std::cout << "Average cost = " << train_costs(n) << std::endl;
+
+		// Plot the training progress //////////////////////////////////////////////
+
+		plot.render();
 	}
 
 	float elapsed = timer.getTimeSec();
@@ -119,7 +116,7 @@ int main(void)
 	std::vector <VectorXd> unshaped_features = lin_layer_p->getFeatures();
 
 	int feature_size = 7;
-	int nb_features_per_row = 10;
+	int nb_features_per_row = 16;
 	
 	std::vector <MatrixXd> features;
 	for (int i = 0; i < (int) unshaped_features.size(); i++)
